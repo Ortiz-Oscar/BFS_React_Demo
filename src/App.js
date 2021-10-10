@@ -8,15 +8,42 @@ import { Stage, Layer } from 'react-konva';
 function App() {
   const tablero = new Tablero();
   const tamano = {width:800/tablero.tamano, height:600/tablero.tamano};
+
   const setMuro = (e) => {
     let celdasAux = celdas.slice();
     // eslint-disable-next-line no-eval
     let [a,b] = eval(`[${e.target.attrs.id}]`)//Que cochinada :v
     let celdaObjetivo = celdasAux[a][b];//Almacena el puntero a dicha celda
-    celdaObjetivo.seleccionado ? celdaObjetivo.fill = '#ffffff' : celdaObjetivo.fill = '#000000';
-    celdaObjetivo.seleccionado = !(celdaObjetivo.seleccionado);
+    if(ingresandoFinal){
+      celdaObjetivo.esFinal ? celdaObjetivo.fill = '#ffffff' : celdaObjetivo.fill = '#FF0000';
+      if(CeldaFinal){
+        CeldaFinal.esFinal = false;
+        CeldaFinal.fill = '#ffffff';
+      }
+      celdaObjetivo.esFinal = !(celdaObjetivo.esFinal);
+      updateCeldaFinal(celdaObjetivo);
+      ingresandoFinal = false;
+    }else if(ingresandoInicial){
+      celdaObjetivo.esInicial ? celdaObjetivo.fill = '#ffffff' : celdaObjetivo.fill = '#0000CD';
+      if(CeldaInicial){
+        CeldaInicial.esInicial = false;
+        CeldaInicial.fill = '#ffffff';
+      }
+      celdaObjetivo.esInicial = !(celdaObjetivo.esInicial);
+      updateCeldaInicial(celdaObjetivo)
+      ingresandoInicial = false;
+    }else{
+      if(celdaObjetivo !== CeldaFinal && celdaObjetivo !== CeldaInicial){
+        celdaObjetivo.seleccionado ? celdaObjetivo.fill = '#ffffff' : celdaObjetivo.fill = '#000000';
+        celdaObjetivo.seleccionado = !(celdaObjetivo.seleccionado);
+      }
+    }
     updateCeldas(celdasAux)//Ahhh ya entendí esta wea mae que nivel
   }
+  let ingresandoFinal = false;
+  let ingresandoInicial = false;
+  const [CeldaFinal, updateCeldaFinal] = useState(null);
+  const [CeldaInicial, updateCeldaInicial] = useState(null);
   const [celdas, updateCeldas] = useState(
     tablero.getTablero.map(arr => 
           arr.map(celda => 
@@ -59,8 +86,8 @@ function App() {
       </Stage>
       <div className="Descripcion">
         <h3>Guia de interaccion</h3>
-        <button onClick={()=>console.log('Inicio presionado')}> Asignar celda inicial </button>
-        <button onClick={()=>console.log('Final presionado')}> Asignar celda final </button>
+        <button onClick={()=>{ ingresandoInicial = true; }}> Asignar celda inicial </button>
+        <button onClick={()=>{ ingresandoFinal = true; }}> Asignar celda final </button>
       </div>
     </div>
 
