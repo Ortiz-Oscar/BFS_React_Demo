@@ -1,11 +1,14 @@
-import { Cord } from "./Cord";
-
-export class Celda{
-    #cord;
+import React from "react";
+import './Celda.css';
+export class Celda extends React.Component{
+    #row;
+    #column;
     #visitado;
     #seleccionado;
-    constructor({x,y}, visitado, seleccionado){
-        this.#cord = new Cord(x,y);
+    constructor(x, y, visitado, seleccionado){
+        super();
+        this.#row = x;
+        this.#column = y;
         this.#visitado = visitado;
         this.#seleccionado = seleccionado;
     }
@@ -20,10 +23,13 @@ export class Celda{
     set visitado(visitado){
         this.#visitado = visitado;
     }
-    posX(){
-        return this.#cord.x;
+    render(){
+        return <div className="Celda" 
+                    row = { this.#row } 
+                    column = { this.#column }
+                    key = {`${this.#row},${this.#column}`}
+                    onClick = {()=>console.log(this.#row, this.#column)}
+                ></div>
     }
-    posY(){
-        return this.#cord.y;
-    }
+
 }

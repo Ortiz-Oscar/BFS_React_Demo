@@ -1,0 +1,15 @@
+.Celda {
+  border: solid 1px;
+  height: 25px;
+  max-width: 25px;
+  display: inline-block;
+  inline-size: 25px;
+  margin-top: -5px;
+}
+.Celda:hover {
+  background-color: black;
+}
+
+.Celda.verde {
+  background-color: green;
+}
