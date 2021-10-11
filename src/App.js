@@ -17,6 +17,7 @@ function App() {
         <h2>Dijkstra SP visualizado</h2>
       </div>
       <Tablero></Tablero>
+      <p>*Favor ajustar la resolución tal que la cantidad de columnas sea 48 y las filas 15*</p>
     </div>
   );
 }
