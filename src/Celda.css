@@ -1,15 +1,21 @@
 .Celda {
-  border: solid 1px;
-  height: 25px;
+  border: solid 0.2px;
+  height: 20px;
   max-width: 25px;
   display: inline-block;
   inline-size: 25px;
   margin-top: -5px;
 }
 .Celda:hover {
-  background-color: black;
+  transform: scale(1.2);
 }
 
-.Celda.verde {
-  background-color: green;
+.Celda-selected {
+  background-color: black;
+  border: solid 0.2px;
+  height: 20px;
+  max-width: 25px;
+  display: inline-block;
+  inline-size: 25px;
+  margin-top: -5px;
 }
