@@ -2,8 +2,7 @@ import './App.css';
 import './Celda.css';
 import { useState } from 'react';
 import { Celda } from "./Celda";
-import { unvisitedNeighbors } from './Engine';
-
+import { BFS } from './Engine';
 function App() {
   const rowCuantity = 20;
   const columnCuantity = 45;
@@ -19,7 +18,6 @@ function App() {
   const setPunto = (row, column) => {
     let celdasAux = celdas.slice();
     let celdaObjetivo = celdasAux[row][column];
-    console.log(unvisitedNeighbors(celdaObjetivo, celdas));
     if(agregandoInicio){
       if(celdaInicial){
         celdaInicial.isStart = !celdaInicial.isStart;
@@ -41,13 +39,23 @@ function App() {
     }
     updateCeldas(celdasAux);
   }
+    const run = ()=>{
+      if(celdaFinal && celdaInicial){
+        let result = BFS(celdaInicial,celdaFinal,celdas);
+        result.forEach(r => {
+          setPunto(r.row,r.column);
+        })
+      }else{
+        alert("No hay inicio ni fin");
+      }
+    }
   return (
     <div>
       <div className="actions">
         <h2>Dijkstra SP visualizado</h2>
         <button className="Inicio" onClick = { ()=>agregandoInicio = true }>Agregar punto inicial</button>
         <button className="Fin" onClick = { ()=>agregandoFinal = true }>Agregar punto final</button>
-        <button className="Correr">Ejecutar</button>
+        <button className="Correr" onClick = {run}>Ejecutar</button>
       </div>
       <br/>
       <div className="container">
