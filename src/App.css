@@ -3,44 +3,103 @@ div.container {
   width: 95%;
   height: 80%;
   margin: auto;
+  resize: none;
+  padding: -5px -5px;
 }
 div.actions {
   position: relative;
   text-align: center;
 }
 button.Inicio {
-  background-color: #1c8cd6; /* Green */
+  background-color: #dee202; /* Green */
   border: solid 1px;
   color: black;
-  padding: 15px 10px;
-  margin: 8px;
+  padding: 5px 10px;
+  margin: 3px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 10px;
 }
 button.Fin {
-  background-color: #c5271c; /* Green */
+  background-color: #c5170b; /* Green */
   border: solid 1px;
   color: black;
-  padding: 15px 32px;
+  padding: 5px 32px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  margin: 8px;
+  font-size: 10px;
+  margin: 3px;
 }
 button.Correr {
-  background-color: #e2f024; /* Green */
+  background-color: rgb(255, 153, 0); /* Green */
   border: solid 1px;
   color: black;
-  padding: 15px 32px;
+  padding: 5px 32px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  margin: 8px;
+  font-size: 10px;
+  margin: 3px;
 }
 button:hover {
   transform: scale(1.02);
+}
+
+.Celda {
+  border: groove 0.5px;
+  height: 20px;
+  max-width: 20px;
+  display: inline-block;
+  inline-size: 20px;
+  margin-top: -5px;
+}
+.Celda:hover {
+  background-color: #202020;
+}
+.Celda-final {
+  background-color: #ff0000;
+  border: groove 0.5px;
+  height: 20px;
+  max-width: 20px;
+  display: inline-block;
+  inline-size: 20px;
+  margin-top: -5px;
+}
+.Celda-start {
+  background-color: #3943b7;
+  border: groove 0.5px;
+  height: 20px;
+  max-width: 20px;
+  display: inline-block;
+  inline-size: 20px;
+  margin-top: -5px;
+}
+.Celda-locked {
+  background-color: #0c0d25;
+  border: groove 0.5px;
+  height: 20px;
+  max-width: 20px;
+  display: inline-block;
+  inline-size: 20px;
+  margin-top: -5px;
+}
+.Celda-visited {
+  background-color: #3fdec9;
+  border: groove 0.5px;
+  height: 20px;
+  max-width: 20px;
+  display: inline-block;
+  inline-size: 20px;
+  margin-top: -5px;
+}
+.Celda-path {
+  background-color: #f8b60a;
+  border: groove 0.5px;
+  height: 20px;
+  max-width: 20px;
+  display: inline-block;
+  inline-size: 20px;
+  margin-top: -5px;
 }

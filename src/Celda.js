@@ -1,47 +1,29 @@
 export class Celda{
     #row;
     #column;
-    #seleccionado;
     #isFinal;
     #isStart;
-    constructor(x, y, seleccionado, isFinal, isStart){
+    #isLocked;
+    #clase;
+    constructor(x, y, isFinal, isStart, isLocked){
         this.#row = x;
         this.#column = y;
-        this.#seleccionado = seleccionado;
         this.#isFinal = isFinal;
         this.#isStart = isStart;
+        this.#isLocked = isLocked;
+        this.#clase = 'Celda';
     }
-    get seleccionado(){
-        return this.#seleccionado;
-    }
-    get row(){
-        return this.#row;
-    }
-    get column(){
-        return this.#column;
-    }
-    get isFinal(){
-        return this.#isFinal;
-    }
-    get isStart(){
-        return this.#isStart;
-    }
+    get row(){ return this.#row; }
+    get column(){ return this.#column; }
+    get isFinal(){ return this.#isFinal; }
+    get isStart(){ return this.#isStart; }
+    get isLocked(){ return this.#isLocked; }
+    get clase(){return this.#clase};
 
-    set seleccionado(seleccionado){
-        this.#seleccionado = seleccionado;
-    }
-    set row(row){
-        this.#row = row;
-    }
-    set column(column){
-        this.#column = column;
-    }
-    set isFinal(isFinal){
-        this.#isFinal= isFinal;
-    }
-    set isStart(isStart){
-        this.#isStart = isStart;
-    }
+    set isFinal(isFinal){ this.#isFinal= isFinal; }
+    set isStart(isStart){ this.#isStart = isStart; }
+    set isLocked(isLocked){ this.#isLocked = isLocked; }
+    set clase(clase){ this.#clase = clase; }
 
     vecinos(){
         return [
