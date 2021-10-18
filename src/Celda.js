@@ -5,13 +5,13 @@ export class Celda{
     #isStart;
     #isLocked;
     #clase;
-    constructor(x, y, isFinal, isStart, isLocked){
+    constructor(x, y, isFinal, isStart, isLocked, clase = 'Celda'){
         this.#row = x;
         this.#column = y;
         this.#isFinal = isFinal;
         this.#isStart = isStart;
         this.#isLocked = isLocked;
-        this.#clase = 'Celda';
+        this.#clase = clase;
     }
     get row(){ return this.#row; }
     get column(){ return this.#column; }

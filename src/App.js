@@ -1,18 +1,16 @@
 import './App.css';
 import { useState } from 'react';
-import { Celda } from "./Celda";
 import { Queue } from "./Queue";
-import { rowCuantity, columnCuantity } from "./Globales";
+import { rowCuantity, columnCuantity, defaultGrid } from "./Globales";
+import { Celda } from './Celda';
 
 function App() {
-  const [celdas, updateCeldas] = useState([...new Array(rowCuantity).keys()].map(i =>
-    [...new Array(columnCuantity).keys()].map(j =>
-        new Celda(i,j,false,false, false)
-    )));
+  const [celdas, updateCeldas] = useState(defaultGrid);
   const [celdaInicial, updateCeldaInicial] = useState(null);
   const [celdaFinal, updateCeldaFinal] = useState(null);
-  let agregandoFinal = false;
-  let agregandoInicio = false;
+  const [addingEnd, updateAddingEnd] = useState(false);
+  const [addingStart, updateAddingStart] = useState(false);
+  const [running, updateRunning] = useState(false);
   function BFS(celdaInicial, celdaFinal){
     let visitados = solve(celdaInicial,celdaFinal);
     return reconstruirCamino(celdaInicial,celdaFinal,visitados);
@@ -65,58 +63,63 @@ function App() {
     let celda = CeldaFinal;
     while(celda !== null && anteriores[celda.row][celda.column]){
         camino.push(celda);
-        console.log(celda.row, celda.column);
         celda = anteriores[celda.row][celda.column].prev;
     }
     camino.reverse();
     if(camino[0] === celdaInicial)return camino;
     return []; 
   }
+  const clearGrid = ()=>{
+    updateCeldas(defaultGrid.map(filas => filas.map(celda => new Celda(celda.row,celda.column,false,false, false))));
+    updateCeldaInicial(null);
+    updateCeldaFinal(null);
+    setTimeout(()=>updateRunning(false),1);
+  }
   const setPunto = (row, column) => {
-    let celdasAux = celdas.slice();
-    let celdaObjetivo = celdasAux[row][column];
-    if(agregandoInicio){
-      if(celdaInicial){
-        celdaInicial.isStart = !celdaInicial.isStart;
-        celdaInicial.clase = 'Celda';
+    if(!running){
+      let celdasAux = celdas.slice();
+      let celdaObjetivo = celdasAux[row][column];
+      if(addingStart){
+        if(celdaInicial){
+          celdaInicial.isStart = !celdaInicial.isStart;
+          celdaInicial.clase = 'Celda';
+        }
+        celdaObjetivo.isStart = !celdaObjetivo.isStart;
+        celdaObjetivo.clase = 'Celda-start';
+        updateCeldaInicial(celdaObjetivo);
+        updateAddingStart(!addingStart);
+      }else if(addingEnd){
+        if(celdaFinal){
+          celdaFinal.isFinal = !celdaFinal.isFinal;
+          celdaFinal.clase = 'Celda';
+        }
+        celdaObjetivo.isFinal = !celdaObjetivo.isFinal;
+        celdaObjetivo.clase = 'Celda-final';
+        updateCeldaFinal(celdaObjetivo);
+        updateAddingEnd(!addingEnd);
+      }else{
+        if(!celdaObjetivo.isFinal && !celdaObjetivo.isStart){
+          celdaObjetivo.isLocked = !celdaObjetivo.isLocked;
+          celdaObjetivo.clase !== 'Celda' ? celdaObjetivo.clase = 'Celda' : celdaObjetivo.clase = 'Celda-locked';
+        }
       }
-      celdaObjetivo.isStart = !celdaObjetivo.isStart;
-      celdaObjetivo.clase = 'Celda-start';
-      updateCeldaInicial(celdaObjetivo);
-      agregandoInicio = false;
-    }else if(agregandoFinal){
-      if(celdaFinal){
-        celdaFinal.isFinal = !celdaFinal.isFinal;
-        celdaFinal.clase = 'Celda';
-      }
-      celdaObjetivo.isFinal = !celdaObjetivo.isFinal;
-      celdaObjetivo.clase = 'Celda-final';
-      updateCeldaFinal(celdaObjetivo);
-      agregandoFinal = false;
-    }else{
-      if(!celdaObjetivo.isFinal && !celdaObjetivo.isStart){
-        celdaObjetivo.isLocked = !celdaObjetivo.isLocked;
-        celdaObjetivo.clase !== 'Celda' ? celdaObjetivo.clase = 'Celda' : celdaObjetivo.clase = 'Celda-locked';
-      }
+      updateCeldas(celdasAux);
     }
-    updateCeldas(celdasAux);
   }
     const run = ()=>{
-      if(celdaFinal && celdaInicial){
+      if(celdaFinal && celdaInicial && !running){
+        updateRunning(true);//No permite que se dibuje mientras grafica
         let result = BFS(celdaInicial,celdaFinal);
         result.forEach(r => {
           setTimeout(()=>{
             updateCeldas(celdas.map(filas => filas.map(c =>{
-              if(c.row === r.row && c.column === r.column){
+              if(c.row === r.row && c.column === r.column && !r.isStart && !r.isFinal ){
                 c.clase = 'Celda-path';
               }
               return c;
             })))
-          },10);
-          
+          },5);
         })
-      }else{
-        alert("No hay celda de inicio o fin");
       }
     }
   return (
@@ -131,9 +134,10 @@ function App() {
                 ></div>))}
       </div>
       <div className="actions">
-        <button className="Inicio" onClick = { ()=>agregandoInicio = true }>Agregar punto inicial</button>
-        <button className="Fin" onClick = { ()=>agregandoFinal = true }>Agregar punto final</button>
+        <button className="Inicio" onClick = { ()=>updateAddingStart(!addingStart) }>Agregar punto inicial</button>
+        <button className="Fin" onClick = { ()=>updateAddingEnd(!addingEnd) }>Agregar punto final</button>
         <button className="Correr" onClick = {run}>Ejecutar</button>
+        <button className="Correr" onClick = {clearGrid}>Limpiar</button>
       </div>
       <br/>
     </div>
