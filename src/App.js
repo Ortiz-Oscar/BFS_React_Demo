@@ -11,39 +11,38 @@ function App() {
   const [addingEnd, updateAddingEnd] = useState(false);
   const [addingStart, updateAddingStart] = useState(false);
   const [running, updateRunning] = useState(false);
-  function BFS(celdaInicial, celdaFinal){
-    let visitados = solve(celdaInicial,celdaFinal);
-    return reconstruirCamino(celdaInicial,celdaFinal,visitados);
+  function BFS(){
+    return reconstruirCamino(solve());
   }
   function unvisitedNeighbors(celda){
-    let vecinos = celda.vecinos();
-    let result = vecinos.filter(({row,col}) => 0 <= row && 0 <= col && row < rowCuantity && col < columnCuantity )
-                        .filter(({row,col})=> !celdas[row][col].isLocked);
-    return result;
+    return (celda.vecinos()).filter(({row,col}) => 0 <= row && 0 <= col && row < rowCuantity && col < columnCuantity )
+    .filter(({row,col})=> !celdas[row][col].isLocked);
   }
-  function solve(celdaInicial,celdaFinal){
+  function solve(){
     let queue = new Queue();
-    queue.enqueue(celdaInicial);
     let visitados = [...new Array(rowCuantity).keys()].map(() =>
-        [...new Array(columnCuantity).keys()].map(() =>
-            false
-        ));
+    [...new Array(columnCuantity).keys()].map(() =>
+        false
+    ));
     let anteriores = [...new Array(rowCuantity).keys()].map(() =>
-        [...new Array(columnCuantity).keys()].map(() =>
-            null
-        ));
+    [...new Array(columnCuantity).keys()].map(() =>
+        null
+    ));
+    //Inicia algoritmo
+    queue.enqueue(celdaInicial);
     visitados[celdaInicial.row][celdaInicial.column] = true;
     anteriores[celdaInicial.row][celdaInicial.column] = {prev:null};
     while(!queue.isEmpty()){
+        let encontrado = false;
         let actual = queue.dequeue();
-        if(actual === celdaFinal){break;}
-        let vecinos = unvisitedNeighbors(actual,celdas).map(({row,col})=>celdas[row][col]);
+        let vecinos = unvisitedNeighbors(actual).map(({row,col})=>celdas[row][col]);
+        encontrado = vecinos.some(v => v === celdaFinal);//Revisamos si se encontró de antemano
         vecinos.forEach(v => {
             if(!visitados[v.row][v.column]){
                 queue.enqueue(v);
                 visitados[v.row][v.column] = true;
                 anteriores[v.row][v.column] = {prev:actual};
-                setTimeout(()=>{
+                setTimeout(()=>{//Animación de dibujo en grid principal
                   updateCeldas(celdas.map(fila => fila.map(c => {
                     if(c.row === v.row && c.column === v.column){
                       if(!c.isFinal && !c.isStart){
@@ -55,12 +54,13 @@ function App() {
                 },1);
             }
         })
+        if(encontrado) break;
     }
     return anteriores;
   }
-  function reconstruirCamino(celdaInicial, CeldaFinal, anteriores){
+  function reconstruirCamino(anteriores){
     let camino = [];
-    let celda = CeldaFinal;
+    let celda = celdaFinal;
     while(celda !== null && anteriores[celda.row][celda.column]){
         camino.push(celda);
         celda = anteriores[celda.row][celda.column].prev;
@@ -75,7 +75,7 @@ function App() {
     updateCeldaFinal(null);
     setTimeout(()=>updateRunning(false),1);
   }
-  const setPunto = (row, column) => {
+  const agregarCelda = (row, column) => {
     console.log(row,column);
     if(!running){
       let celdasAux = celdas.slice();
@@ -110,14 +110,13 @@ function App() {
     const run = ()=>{
       if(celdaFinal && celdaInicial && !running){
         updateRunning(true);//No permite que se dibuje mientras grafica
-        let result = BFS(celdaInicial,celdaFinal);
-        result.forEach(r => {
+        BFS().forEach(path => {
           setTimeout(()=>{
-            updateCeldas(celdas.map(filas => filas.map(c =>{
-              if(c.row === r.row && c.column === r.column && !r.isStart && !r.isFinal ){
-                c.clase = 'Celda-path';
+            updateCeldas(celdas.map(filas => filas.map(celda =>{
+              if(celda.row === path.row && celda.column === path.column && !path.isStart && !path.isFinal ){
+                celda.clase = 'Celda-path';
               }
-              return c;
+              return celda;
             })))
           },5);
         })
@@ -125,22 +124,32 @@ function App() {
     }
   return (
     <div className="marco">
+      <h2>BFS Shortest Path</h2>
+      <div className="actions">
+        <button className="Inicio" onClick = { ()=>updateAddingStart(!addingStart) }>Celda inicial</button>
+        <button className="Fin" onClick = { ()=>updateAddingEnd(!addingEnd) }>Celda final</button>
+        <button className="Correr" onClick = {run}>Ejecutar BFS</button>
+        <button className="Limpiar" onClick = {clearGrid}>Limpiar</button>
+      </div>
+      <br/>
+      <div className="description">
+        <div className="Celda-start"></div> <p>Inicio</p>
+        <div className="Celda-final"></div><p>Final</p>
+        <div className="Celda-locked"></div><p>Bloqueado</p>
+        <div className="Celda-visited"></div><p>Visitado</p>
+        <div className="Celda"></div><p>Sin visitar</p>
+        <div className="Celda-path"></div><p>Recorrido</p>
+      </div>
+      <br/>
       <table className="grid">
         {celdas.map(arr => <tr> {arr.map(celda => <
                     td className = { celda.clase } 
                     row = { celda.row } 
                     column = { celda.column }
                     key = {`{${ celda.row },${ celda.column }}`}
-                    onClick={ ()=>setPunto(celda.row, celda.column) }
+                    onClick={ ()=>agregarCelda(celda.row, celda.column) }
                 ></td>)}</tr>)}
       </table>
-      <div className="actions">
-        <button className="Inicio" onClick = { ()=>updateAddingStart(!addingStart) }>Agregar punto inicial</button>
-        <button className="Fin" onClick = { ()=>updateAddingEnd(!addingEnd) }>Agregar punto final</button>
-        <button className="Correr" onClick = {run}>Ejecutar</button>
-        <button className="Correr" onClick = {clearGrid}>Limpiar</button>
-      </div>
-      <br/>
     </div>
   );
 }
