@@ -76,6 +76,7 @@ function App() {
     setTimeout(()=>updateRunning(false),1);
   }
   const setPunto = (row, column) => {
+    console.log(row,column);
     if(!running){
       let celdasAux = celdas.slice();
       let celdaObjetivo = celdasAux[row][column];
@@ -123,16 +124,16 @@ function App() {
       }
     }
   return (
-    <div>
-      <div className="container">
-        {celdas.map(arr => arr.map(celda => <
-                    div className={ celda.clase } 
+    <div className="marco">
+      <table className="grid">
+        {celdas.map(arr => <tr> {arr.map(celda => <
+                    td className = { celda.clase } 
                     row = { celda.row } 
                     column = { celda.column }
-                    key = {`${ celda.row },${ celda.column }`}
+                    key = {`{${ celda.row },${ celda.column }}`}
                     onClick={ ()=>setPunto(celda.row, celda.column) }
-                ></div>))}
-      </div>
+                ></td>)}</tr>)}
+      </table>
       <div className="actions">
         <button className="Inicio" onClick = { ()=>updateAddingStart(!addingStart) }>Agregar punto inicial</button>
         <button className="Fin" onClick = { ()=>updateAddingEnd(!addingEnd) }>Agregar punto final</button>
